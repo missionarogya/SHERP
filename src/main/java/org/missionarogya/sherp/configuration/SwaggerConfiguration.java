@@ -27,7 +27,7 @@ public class SwaggerConfiguration {
 
         return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
                 .apiInfo(apiInfo())
-                .includePatterns(".*spring.*"); // assuming the API lives at something like http://myapp/api
+                .includePatterns(".*profile.*"); // assuming the API lives at something like http://myapp/api
     }
 
     private ApiInfo apiInfo() {
