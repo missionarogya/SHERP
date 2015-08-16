@@ -1,8 +1,13 @@
 package org.missionarogya.sherp.controller;
+import java.util.Locale;
+
 import org.missionarogya.sherp.configuration.Hibernate.HibernateConfiguration;
 import org.missionarogya.sherp.controller.object.request.CreateProfileRequestType;
 import org.missionarogya.sherp.controller.object.response.ResponseType;
 import org.missionarogya.sherp.model.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -14,6 +19,9 @@ public abstract class AbstractController {
   
 	private AbstractApplicationContext context;
 	private int auth;
+	@Autowired
+	@Qualifier("messageSource")
+	protected MessageSource messageSource;
 
 	protected AbstractApplicationContext getContext() {
 		context = new AnnotationConfigApplicationContext(
@@ -58,4 +66,9 @@ public abstract class AbstractController {
 		}
 		
 	  }
+	protected Locale getLocale(){
+		Locale localeFromBuilder = new Locale.Builder().setLanguage("en").setRegion("US").build();
+		return localeFromBuilder;
+	}
+	
 }

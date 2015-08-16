@@ -6,7 +6,6 @@ import org.missionarogya.sherp.controller.object.response.ResponseType;
 import org.missionarogya.sherp.model.service.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,8 +34,6 @@ public class ProfileController extends AbstractController {
     public CreateProfileResponseType createProfile (@RequestBody CreateProfileRequestType request) throws RuntimeException{
 		String action = "CreateAdminRO";
 		checkAuthorization(request, action);
-		System.out.println("hi9");
-		
 		ProfileService profileService = (ProfileService) getContext().getBean(
 				"ProfileService");
 		int memberId = profileService.createProfile(request);
@@ -50,10 +47,10 @@ public class ProfileController extends AbstractController {
     }
 	
 	public @ResponseBody ResponseEntity<Object> handleException(Exception ex) {
-		
 		ResponseType response = new ResponseType();
 		if(errorCode ==405){
-			response.setMessage("User is already available");
+			String message = messageSource.getMessage("userunavailable",null, getLocale());
+			response.setMessage(message);
 			return new ResponseEntity<Object>(response, HttpStatus.TOO_MANY_REQUESTS);
 		}
 		else{
