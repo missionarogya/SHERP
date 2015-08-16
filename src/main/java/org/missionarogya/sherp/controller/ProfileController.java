@@ -1,8 +1,10 @@
 package org.missionarogya.sherp.controller;
 
+import org.apache.log4j.Logger;
 import org.missionarogya.sherp.controller.object.request.CreateProfileRequestType;
 import org.missionarogya.sherp.controller.object.response.CreateProfileResponseType;
 import org.missionarogya.sherp.controller.object.response.ResponseType;
+import org.missionarogya.sherp.logger.SherpLogger;
 import org.missionarogya.sherp.model.service.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @RequestMapping("/profile")
 @RestController
 public class ProfileController extends AbstractController {
+	private static final Logger logger = Logger.getLogger(ProfileController.class);
 	private int errorCode= 200;
 	@ApiOperation(value = "/admin/create", notes = "Profile Creation", response = CreateProfileResponseType.class)
 	@ApiResponses(value = {
@@ -30,8 +33,12 @@ public class ProfileController extends AbstractController {
 	})
     @RequestMapping( value="/admin/create",method=RequestMethod.POST)
 	@ResponseStatus(value=HttpStatus.OK)
-	
     public CreateProfileResponseType createProfile (@RequestBody CreateProfileRequestType request) throws RuntimeException{
+		String methodName = "createProfile";
+		if (logger.isDebugEnabled()) {
+			SherpLogger.start(logger,request.getSessionId(),methodName);
+		}
+
 		String action = "CreateAdminRO";
 		checkAuthorization(request, action);
 		ProfileService profileService = (ProfileService) getContext().getBean(
@@ -39,10 +46,14 @@ public class ProfileController extends AbstractController {
 		int memberId = profileService.createProfile(request);
 		if(memberId==0){
 			errorCode = 405;
+			SherpLogger.debug(logger, request.getSessionId(), messageSource.getMessage("userunavailable",null, getLocale()));
 			throw new RuntimeException();
 		}
 		CreateProfileResponseType response = new CreateProfileResponseType();
 		response.setTokenValue(memberId);
+		if (logger.isDebugEnabled()) {
+			SherpLogger.exit(logger,request.getSessionId(),methodName);
+		}
 		return response;
     }
 	
@@ -51,6 +62,7 @@ public class ProfileController extends AbstractController {
 		if(errorCode ==405){
 			String message = messageSource.getMessage("userunavailable",null, getLocale());
 			response.setMessage(message);
+			
 			return new ResponseEntity<Object>(response, HttpStatus.TOO_MANY_REQUESTS);
 		}
 		else{
