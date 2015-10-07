@@ -1,10 +1,12 @@
 package org.missionarogya.sherp.controller;
 
 import org.apache.log4j.Logger;
+import org.missionarogya.sherp.controller.object.request.AnswerType;
 import org.missionarogya.sherp.controller.object.request.CreateProfileRequestType;
 import org.missionarogya.sherp.controller.object.response.CreateProfileResponseType;
 import org.missionarogya.sherp.controller.object.response.ResponseType;
 import org.missionarogya.sherp.logger.SherpLogger;
+import org.missionarogya.sherp.model.service.AppService;
 import org.missionarogya.sherp.model.service.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +58,27 @@ public class ProfileController extends AbstractController {
 		}
 		return response;
     }
-	
+	@ApiOperation(value = "/answer", notes = "Answer Creation", response = CreateProfileResponseType.class)
+	@ApiResponses(value = {
+  		@ApiResponse(code = 400, message = "Invalid request supplied"),
+  		@ApiResponse(code = 403, message = "Authentication Failure") 
+	})
+    @RequestMapping( value="/answer",method=RequestMethod.POST)
+	@ResponseStatus(value=HttpStatus.OK)
+    public void createAnswer (@RequestBody AnswerType request) throws RuntimeException{
+		String methodName = "createProfile";
+		if (logger.isDebugEnabled()) {
+			SherpLogger.start(logger,request.getSessionId(),methodName);
+		}
+		
+		AppService appService = (AppService) getContext().getBean(
+				"AppService");
+		appService.insertAnswer(request);
+		if (logger.isDebugEnabled()) {
+			SherpLogger.exit(logger,request.getSessionId(),methodName);
+		}
+		
+    }
 	public @ResponseBody ResponseEntity<Object> handleException(Exception ex) {
 		ResponseType response = new ResponseType();
 		if(errorCode ==405){
