@@ -6,7 +6,20 @@
 
  <display-name>SHERP</display-name>
 
- 
+ <servlet>
+                  <servlet-name>default</servlet-name>
+                  <servlet-class>
+                           org.apache.catalina.servlets.DefaultServlet
+                  </servlet-class>
+                  <load-on-startup>1</load-on-startup>
+         </servlet>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/swagger/*</url-pattern>
+        
+        <url-pattern>/css/*</url-pattern>
+        <url-pattern>/js/*</url-pattern>
+    </servlet-mapping>
 
  
 </web-app>
